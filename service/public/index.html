@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .email-display {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+    input[type="email"], input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Email Management</h1>
+    <div class="email-display" id="emailDisplay">
+      Current Email: Loading...
+    </div>
+    
+    <form id="emailForm">
+      <input type="email" id="emailInput" placeholder="Enter new email" required>
+      <input type="submit" value="Change Email">
+    </form>
+  </div>
+
+  <script>
+    // Function to fetch the current email from the server
+    async function fetchEmail() {
+      try {
+        const response = await fetch('http://localhost:3000/get-email');
+        const data = await response.text();
+        document.getElementById('emailDisplay').innerText = data;
+      } catch (error) {
+        console.error('Error fetching email:', error);
+      }
+    }
+
+    // Function to change the email
+    async function changeEmail(event) {
+      event.preventDefault();
+      const email = document.getElementById('emailInput').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/change-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `email=${encodeURIComponent(email)}`
+        });
+
+        const data = await response.text();
+        document.getElementById('emailDisplay').innerText = data;
+        document.getElementById('emailInput').value = ''; // Clear the input field
+      } catch (error) {
+        console.error('Error changing email:', error);
+      }
+    }
+
+    // Event listener for form submission
+    document.getElementById('emailForm').addEventListener('submit', changeEmail);
+
+    // Fetch the current email when the page loads
+    fetchEmail();
+  </script>
+
+</body>
+</html>
